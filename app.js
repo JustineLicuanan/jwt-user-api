@@ -25,3 +25,6 @@ mongoose
 		});
 	})
 	.catch((err) => console.log(err));
+
+// Routes
+app.use('/users', require('./routes/userRoutes'));
