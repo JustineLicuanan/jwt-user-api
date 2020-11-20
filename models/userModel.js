@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { isEmail, isAlphanumeric } = require('validator');
+const bcrypt = require('bcryptjs');
 
 // Initializations
 const Schema = mongoose.Schema;
@@ -43,5 +44,12 @@ const User = new Schema(
 	},
 	{ timestamps: true }
 );
+
+// Hash password before saving to database
+User.pre('save', async function (next) {
+	const salt = await bcrypt.genSalt(10);
+	this.password = await bcrypt.hash(this.password, salt);
+	next();
+});
 
 module.exports = mongoose.model('user', User);
