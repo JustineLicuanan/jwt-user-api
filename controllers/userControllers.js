@@ -57,7 +57,16 @@ const viewCurrentUserProfileGET = (req, res) => {};
 const viewSpecificUserProfileGET = (req, res) => {};
 
 // View all user profiles
-const viewAllUserProfilesGET = (req, res) => {};
+const viewAllUserProfilesGET = async (req, res) => {
+	try {
+		const users = await User.find()
+			// Filter user props that will be used in the response
+			.select('-role -email -password -createdAt -updatedAt -__v');
+		res.json(users);
+	} catch (err) {
+		res.status(400).json({ err });
+	}
+};
 
 // Update current logged in user profile
 const updateCurrentUserProfilePATCH = (req, res) => {};
