@@ -54,7 +54,21 @@ const logoutGET = (req, res) => {};
 const viewCurrentUserProfileGET = (req, res) => {};
 
 // View specific user profile
-const viewSpecificUserProfileGET = (req, res) => {};
+const viewSpecificUserProfileGET = async (req, res) => {
+	try {
+		const user = await User.findOne({ username: req.params.username })
+			// Filter user props that will be used in the response
+			.select('-role -email -password -createdAt -updatedAt -__v');
+		if (!user)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		res.json(user);
+	} catch (err) {
+		res.status(400).json({ err });
+	}
+};
 
 // View all user profiles
 const viewAllUserProfilesGET = async (req, res) => {
