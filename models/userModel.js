@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { isEmail, isAlphanumeric } = require('validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 // Initializations
 const Schema = mongoose.Schema;
@@ -47,9 +48,57 @@ const User = new Schema(
 
 // Hash password before saving to database
 User.pre('save', async function (next) {
-	const salt = await bcrypt.genSalt(10);
-	this.password = await bcrypt.hash(this.password, salt);
-	next();
+	try {
+		const salt = await bcrypt.genSalt(10);
+		this.password = await bcrypt.hash(this.password, salt);
+		next();
+	} catch (err) {
+		next(err);
+	}
 });
+
+// Static method to login user
+User.statics.login = async function (username, password) {
+	try {
+		const user = await this.findOne({ username })
+			// Filter user props that will be used in the response
+			.select('-__v');
+		if (!user) throw new Error('Username is incorrect');
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) throw new Error('Password is incorrect');
+		return user;
+	} catch (err) {
+		throw err;
+	}
+};
+
+// Static method to create token
+User.statics.createToken = function ({
+	_id,
+	role,
+	name,
+	email,
+	username,
+	createdAt,
+	updatedAt,
+}) {
+	try {
+		return jwt.sign(
+			{
+				_id,
+				role,
+				name,
+				email,
+				username,
+				createdAt,
+				updatedAt,
+			},
+			process.env.JWT_SECRET || 'ultimateSecret',
+			{ expiresIn: '1h' }
+		);
+	} catch (err) {
+		throw err;
+	}
+};
 
 module.exports = mongoose.model('user', User);

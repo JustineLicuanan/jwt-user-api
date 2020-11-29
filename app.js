@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 
 // Initializations
 require('dotenv').config();
@@ -19,15 +20,16 @@ mongoose
 		console.log('Connected to database successfully');
 
 		// Start the server
-		app.listen(PORT, (err) => {
+		app.listen(PORT || 3002, (err) => {
 			if (err) throw err;
-			console.log(`Server is listening on port ${PORT}`);
+			console.log(`Server is listening on port ${PORT || 3002}`);
 		});
 	})
 	.catch((err) => console.log(err));
 
 // Middlewares
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
 app.use('/users', require('./routes/userRoutes'));

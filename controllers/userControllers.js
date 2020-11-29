@@ -45,7 +45,28 @@ const registerPOST = async (req, res) => {
 };
 
 // Login a user
-const loginPOST = (req, res) => {};
+const loginPOST = async (req, res) => {
+	const { username, password } = req.body;
+	try {
+		const user = await User.login(username, password);
+		const token = await User.createToken(user);
+		res.cookie(process.env.JWT_COOKIE_NAME || 'jwt', token, {
+			maxAge: 3600000,
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production' ? true : false,
+		});
+		res.json({
+			success: true,
+			message: 'User logged in successfully',
+			token,
+		});
+	} catch (err) {
+		res.status(400).json({
+			err: true,
+			message: err.message,
+		});
+	}
+};
 
 // Logout a user
 const logoutGET = (req, res) => {};
