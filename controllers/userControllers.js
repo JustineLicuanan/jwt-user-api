@@ -50,11 +50,9 @@ const loginPOST = async (req, res) => {
 	try {
 		const user = await User.login(username, password);
 		const token = await User.createToken(user);
-		res.cookie(process.env.JWT_COOKIE_NAME || 'jwt', token, {
-			maxAge: 3600000,
-			httpOnly: true,
-			secure: process.env.NODE_ENV === 'production' ? true : false,
-		});
+
+		req.token = token;
+		res.set('Authorization', `Bearer ${token}`);
 		res.json({
 			success: true,
 			message: 'User logged in successfully',

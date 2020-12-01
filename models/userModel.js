@@ -82,23 +82,19 @@ User.statics.createToken = function ({
 	createdAt,
 	updatedAt,
 }) {
-	try {
-		return jwt.sign(
-			{
-				_id,
-				role,
-				name,
-				email,
-				username,
-				createdAt,
-				updatedAt,
-			},
-			process.env.JWT_SECRET || 'ultimateSecret',
-			{ expiresIn: '1h' }
-		);
-	} catch (err) {
-		throw err;
-	}
+	return jwt.sign(
+		{
+			_id,
+			role,
+			name,
+			email,
+			username,
+			createdAt,
+			updatedAt,
+		},
+		process.env.JWT_SECRET || 'ultimateSecret',
+		{ expiresIn: '1h' }
+	);
 };
 
 module.exports = mongoose.model('user', User);

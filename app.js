@@ -1,6 +1,5 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
 
 // Initializations
 require('dotenv').config();
@@ -29,7 +28,6 @@ mongoose
 
 // Middlewares
 app.use(express.json());
-app.use(cookieParser());
 
 // Routes
 app.use('/users', require('./routes/userRoutes'));
