@@ -1,0 +1,139 @@
+@host = http://127.0.0.1:{{$dotenv PORT}}
+@username = REPLACE_THIS_WITH_USERNAME
+@jwt = REPLACE_THIS_WITH_JSON_WEB_TOKEN
+
+# /users ENDPOINTS
+# Register endpoint
+POST {{host}}/users/register
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "name": "",
+   "email": "",
+   "username": "",
+   "password": ""
+}
+
+###
+
+# Login endpoint
+POST {{host}}/users/login
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "username": "",
+   "password": ""
+}
+
+###
+
+# Logout endpoint
+GET {{host}}/users/logout
+Authorization: Bearer {{jwt}}
+
+###
+
+# View current logged in user profile endpoint
+GET {{host}}/users/profile
+Authorization: Bearer {{jwt}}
+
+###
+
+# View specific user profile endpoint
+GET {{host}}/users/profile/{{username}}
+
+###
+
+# View all user profiles endpoint
+GET {{host}}/users
+
+###
+
+# Update current logged in user profile endpoint
+PATCH {{host}}/users/profile/update
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "name": "",
+   "email": "",
+   "username": ""
+}
+
+###
+
+# Change current logged in user password endpoint
+PATCH {{host}}/users/profile/update/password
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "password": ""
+}
+
+###
+
+# Delete current logged in user endpoint
+DELETE {{host}}/users/profile/delete
+Authorization: Bearer {{jwt}}
+
+###
+
+# /admin ENDPOINTS
+# Create user endpoint
+POST {{host}}/admin/create
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "role": 4,
+   "name": "",
+   "email": "",
+   "username": "",
+   "password": ""
+}
+
+###
+
+# View specific user profile endpoint
+GET {{host}}/admin/view/{{username}}
+Authorization: Bearer {{jwt}}
+
+###
+
+# View all user profiles endpoint
+GET {{host}}/admin/view
+Authorization: Bearer {{jwt}}
+
+###
+
+# Update specific user profile endpoint
+PATCH {{host}}/admin/update/{{username}}
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "role": 4,
+   "name": "",
+   "email": "",
+   "username": ""
+}
+
+###
+
+# Change specific user password endpoint
+PATCH {{host}}/admin/update/password/{{username}}
+Content-Type: application/json
+Authorization: Bearer {{jwt}}
+
+{
+   "password": ""
+}
+
+###
+
+# Delete specific user endpoint
+DELETE {{host}}/admin/delete/{{username}}
+Authorization: Bearer {{jwt}}

@@ -51,7 +51,6 @@ const loginPOST = async (req, res) => {
 		const user = await User.login(username, password);
 		const token = await User.createToken(user);
 
-		req.token = token;
 		res.set('Authorization', `Bearer ${token}`);
 		res.json({
 			success: true,
@@ -69,8 +68,11 @@ const loginPOST = async (req, res) => {
 // Logout a user
 const logoutGET = (req, res) => {};
 
-// View current logged in user profile
-const viewCurrentUserProfileGET = (req, res) => {};
+// View current logged in user token
+const viewCurrentUserTokenGET = (req, res) => {
+	const token = req.get('Authorization').split(' ')[1];
+	res.json({ token });
+};
 
 // View specific user profile
 const viewSpecificUserProfileGET = async (req, res) => {
@@ -114,7 +116,7 @@ module.exports = {
 	registerPOST,
 	loginPOST,
 	logoutGET,
-	viewCurrentUserProfileGET,
+	viewCurrentUserTokenGET,
 	viewSpecificUserProfileGET,
 	viewAllUserProfilesGET,
 	updateCurrentUserProfilePATCH,
