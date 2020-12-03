@@ -119,7 +119,24 @@ const updateCurrentUserProfilePATCH = (req, res) => {};
 const changeCurrentUserPasswordPATCH = (req, res) => {};
 
 // Delete current logged in user
-const deleteCurrentUserDELETE = (req, res) => {};
+const deleteCurrentUserDELETE = async (req, res) => {
+	try {
+		const user = await User.deleteOne({ _id: req.user._id });
+
+		if (!user.n)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		res.set('Authorization', null);
+		res.json({
+			success: true,
+			message: 'User deleted successfully',
+		});
+	} catch (err) {
+		res.status(400).json({ err });
+	}
+};
 
 module.exports = {
 	registerPOST,
