@@ -14,9 +14,12 @@ const registerPOST = async (req, res) => {
 		// Save new user to database
 		await user.save();
 
+		const token = await User.createToken(user);
+		res.set('Authorization', `Bearer ${token}`);
 		res.status(201).json({
 			success: true,
 			message: 'User created successfully',
+			token,
 		});
 	} catch (error) {
 		let err = {};
@@ -66,7 +69,13 @@ const loginPOST = async (req, res) => {
 };
 
 // Logout a user
-const logoutGET = (req, res) => {};
+const logoutGET = (req, res) => {
+	res.set('Authorization', null);
+	res.json({
+		success: true,
+		message: 'User logged out successfully',
+	});
+};
 
 // View current logged in user token
 const viewCurrentUserTokenGET = (req, res) => {
