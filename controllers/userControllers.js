@@ -78,9 +78,20 @@ const logoutGET = (req, res) => {
 };
 
 // View current logged in user token
-const viewCurrentUserTokenGET = (req, res) => {
-	const token = req.get('Authorization').split(' ')[1];
-	res.json({ token });
+const viewCurrentUserTokenGET = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id);
+		const token = req.get('Authorization').split(' ')[1];
+
+		if (!user)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		res.json({ token });
+	} catch (err) {
+		res.status(400).json({ err });
+	}
 };
 
 // View specific user profile
@@ -164,7 +175,36 @@ const updateCurrentUserProfilePATCH = async (req, res) => {
 };
 
 // Change current logged in user password
-const changeCurrentUserPasswordPATCH = (req, res) => {};
+const changeCurrentUserPasswordPATCH = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id);
+		if (!user)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		user.password = req.body.password;
+		await user.save();
+
+		res.json({
+			success: true,
+			message: 'Password updated successfully',
+		});
+	} catch (error) {
+		let err = {};
+
+		// Handle validation errors
+		if (error._message === 'user validation failed') {
+			Object.keys(error.errors).forEach((errPath) => {
+				err[errPath] = error.errors[errPath].message;
+			});
+			return res.status(400).json({ err });
+		}
+
+		// Handle other errors
+		res.status(400).json({ err: error });
+	}
+};
 
 // Delete current logged in user
 const deleteCurrentUserDELETE = async (req, res) => {
