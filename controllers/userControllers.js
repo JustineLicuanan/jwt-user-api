@@ -113,7 +113,55 @@ const viewAllUserProfilesGET = async (req, res) => {
 };
 
 // Update current logged in user profile
-const updateCurrentUserProfilePATCH = (req, res) => {};
+const updateCurrentUserProfilePATCH = async (req, res) => {
+	const { name, email, username } = req.body;
+	try {
+		const user = await User.updateOne(
+			{ _id: req.user._id },
+			{
+				$set: {
+					name,
+					email,
+					username,
+				},
+			},
+			{ runValidators: true }
+		);
+
+		if (!user.n)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		res.json({
+			success: true,
+			message: 'User updated successfully',
+		});
+	} catch (error) {
+		let err = {};
+
+		// Handle validation errors
+		if (error._message === 'Validation failed') {
+			Object.keys(error.errors).forEach((errPath) => {
+				err[errPath] = error.errors[errPath].message;
+			});
+			return res.status(400).json({ err });
+		}
+
+		// Handle must-unique props errors
+		if (error.code === 11000 && error.keyPattern.email) {
+			err.email = 'Email is already registered';
+			return res.status(400).json({ err });
+		}
+		if (error.code === 11000 && error.keyPattern.username) {
+			err.username = 'Username is already taken';
+			return res.status(400).json({ err });
+		}
+
+		// Handle other errors
+		res.status(400).json({ err: error });
+	}
+};
 
 // Change current logged in user password
 const changeCurrentUserPasswordPATCH = (req, res) => {};
