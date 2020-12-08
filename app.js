@@ -31,3 +31,4 @@ app.use(express.json());
 
 // Routes
 app.use('/users', require('./routes/userRoutes'));
+app.use('/admin', require('./routes/adminRoutes'));
