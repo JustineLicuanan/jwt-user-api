@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 const expressJwt = require('express-jwt');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = process.env;
@@ -27,7 +28,23 @@ const verifyUnauth = (req, res, next) => {
 	next();
 };
 
+// Verify if user is admin
+const verifyAdmin = async (req, res, next) => {
+	try {
+		const user = await User.findById(req.user._id);
+		if (!user || user.role !== 1)
+			return res.status(401).json({
+				err: true,
+				message: "You don't have permission to view this resource",
+			});
+		next();
+	} catch (err) {
+		next(err);
+	}
+};
+
 module.exports = {
 	verifyAuth,
 	verifyUnauth,
+	verifyAdmin,
 };

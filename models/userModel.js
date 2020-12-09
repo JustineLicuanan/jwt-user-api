@@ -12,6 +12,11 @@ const User = new Schema(
 		role: {
 			type: Number,
 			default: 4,
+			validate: [
+				(role) => role === 1 || role === 4,
+				'Role must be either 1 (admin) or 4 (subscriber) only',
+			],
+			required: [true, 'Role field is required'],
 		},
 		name: {
 			type: String,

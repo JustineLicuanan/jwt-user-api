@@ -7,16 +7,37 @@ const {
 	changeSpecificUserPasswordPATCH,
 	deleteSpecificUserDELETE,
 } = require('../controllers/adminControllers');
+const { verifyAuth, verifyAdmin } = require('../middlewares/authMiddlewares');
 
 // Initializations
 const router = express.Router();
 
 // Routes
-router.post('/create', createUserPOST);
-router.get('/view/:username', viewSpecificUserProfileGET);
-router.get('/view', viewAllUserProfilesGET);
-router.patch('/update/:username', updateSpecificUserProfilePATCH);
-router.patch('/update/password/:username', changeSpecificUserPasswordPATCH);
-router.delete('/delete/:username', deleteSpecificUserDELETE);
+router.post('/create', verifyAuth, verifyAdmin, createUserPOST);
+router.get(
+	'/view/:username',
+	verifyAuth,
+	verifyAdmin,
+	viewSpecificUserProfileGET
+);
+router.get('/view', verifyAuth, verifyAdmin, viewAllUserProfilesGET);
+router.patch(
+	'/update/:username',
+	verifyAuth,
+	verifyAdmin,
+	updateSpecificUserProfilePATCH
+);
+router.patch(
+	'/update/password/:username',
+	verifyAuth,
+	verifyAdmin,
+	changeSpecificUserPasswordPATCH
+);
+router.delete(
+	'/delete/:username',
+	verifyAuth,
+	verifyAdmin,
+	deleteSpecificUserDELETE
+);
 
 module.exports = router;
