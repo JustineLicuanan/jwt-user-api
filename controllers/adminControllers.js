@@ -49,7 +49,16 @@ const createUserPOST = async (req, res) => {
 const viewSpecificUserProfileGET = (req, res) => {};
 
 // View all user profiles
-const viewAllUserProfilesGET = (req, res) => {};
+const viewAllUserProfilesGET = async (req, res) => {
+	try {
+		const users = await User.find()
+			// Filter user props that will be used in the response
+			.select('-password -__v');
+		res.json(users);
+	} catch (err) {
+		res.status(400).json({ err });
+	}
+};
 
 // Update specific user profile
 const updateSpecificUserProfilePATCH = (req, res) => {};
