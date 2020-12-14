@@ -81,7 +81,23 @@ const updateSpecificUserProfilePATCH = (req, res) => {};
 const changeSpecificUserPasswordPATCH = (req, res) => {};
 
 // Delete specific user
-const deleteSpecificUserDELETE = (req, res) => {};
+const deleteSpecificUserDELETE = async (req, res) => {
+	try {
+		const user = await User.deleteOne({ username: req.params.username });
+
+		if (!user.n)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		res.json({
+			success: true,
+			message: 'User deleted successfully',
+		});
+	} catch (err) {
+		res.status(400).json({ err });
+	}
+};
 
 module.exports = {
 	createUserPOST,
