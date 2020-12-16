@@ -127,7 +127,36 @@ const updateSpecificUserProfilePATCH = async (req, res) => {
 };
 
 // Change specific user password
-const changeSpecificUserPasswordPATCH = (req, res) => {};
+const changeSpecificUserPasswordPATCH = async (req, res) => {
+	try {
+		const user = await User.findOne({ username: req.params.username });
+		if (!user)
+			return res.status(400).json({
+				err: true,
+				message: 'User does not exist',
+			});
+		user.password = req.body.password;
+		await user.save();
+
+		res.json({
+			success: true,
+			message: 'Password updated successfully',
+		});
+	} catch (error) {
+		let err = {};
+
+		// Handle validation errors
+		if (error._message === 'user validation failed') {
+			Object.keys(error.errors).forEach((errPath) => {
+				err[errPath] = error.errors[errPath].message;
+			});
+			return res.status(400).json({ err });
+		}
+
+		// Handle other errors
+		res.status(400).json({ err: error });
+	}
+};
 
 // Delete specific user
 const deleteSpecificUserDELETE = async (req, res) => {
