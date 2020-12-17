@@ -35,7 +35,7 @@ Authorization: Bearer {{jwt}}
 
 ###
 
-# View current logged in user profile endpoint
+# View current logged in user token endpoint
 GET {{host}}/users/profile
 Authorization: Bearer {{jwt}}
 
